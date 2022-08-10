@@ -1,71 +1,37 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams,  Link } from 'react-router-dom';
 import axios from 'axios';
 import '../App.css';
 
-class UpdateBookInfo extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: '',
-      isbn: '',
-      author: '',
-      description: '',
-      published_date: '',
-      publisher: ''
-    };
+export default function ShowBookDetails() { 
+
+  const [book, setData] = useState({});
+  let params = useParams();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axios('http://localhost:8082/api/books/'+ params.id);
+        setData(response.data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    })();
+  }, [ params.id]) ;
+
+  function onSubmit() {
+    console.log("onSubmit") ;
   }
 
-  componentDidMount() {
-    // console.log("Print id: " + this.props.match.params.id);
-    axios
-      .get('http://localhost:8082/api/books/'+this.props.match.params.id)
-      .then(res => {
-        // this.setState({...this.state, book: res.data})
-        this.setState({
-          title: res.data.title,
-          isbn: res.data.isbn,
-          author: res.data.author,
-          description: res.data.description,
-          published_date: res.data.published_date,
-          publisher: res.data.publisher
-        })
-      })
-      .catch(err => {
-        console.log("Error from UpdateBookInfo");
-      })
-  };
+  function onChange() {
+    console.log("onChange");
+  }
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  onSubmit = e => {
-    e.preventDefault();
-
-    const data = {
-      title: this.state.title,
-      isbn: this.state.isbn,
-      author: this.state.author,
-      description: this.state.description,
-      published_date: this.state.published_date,
-      publisher: this.state.publisher
-    };
-
-    axios
-      .put('http://localhost:8082/api/books/'+this.props.match.params.id, data)
-      .then(res => {
-        this.props.history.push('/show-book/'+this.props.match.params.id);
-      })
-      .catch(err => {
-        console.log("Error in UpdateBookInfo!");
-      })
-  };
-
-
-  render() {
     return (
       <div className="UpdateBookInfo">
+        {
+          console.log(book)
+        }
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
@@ -83,7 +49,7 @@ class UpdateBookInfo extends Component {
           </div>
 
           <div className="col-md-8 m-auto">
-          <form noValidate onSubmit={this.onSubmit}>
+          <form noValidate onSubmit={onSubmit}>
             <div className='form-group'>
               <label htmlFor="title">Title</label>
               <input
@@ -91,8 +57,8 @@ class UpdateBookInfo extends Component {
                 placeholder='Title of the Book'
                 name='title'
                 className='form-control'
-                value={this.state.title}
-                onChange={this.onChange}
+                value={book.title}
+                onChange={onChange}
               />
             </div>
             <br />
@@ -104,8 +70,8 @@ class UpdateBookInfo extends Component {
                 placeholder='ISBN'
                 name='isbn'
                 className='form-control'
-                value={this.state.isbn}
-                onChange={this.onChange}
+                value={book.isbn}
+                onChange={onChange}
               />
             </div>
 
@@ -116,8 +82,8 @@ class UpdateBookInfo extends Component {
                 placeholder='Author'
                 name='author'
                 className='form-control'
-                value={this.state.author}
-                onChange={this.onChange}
+                value={book.author}
+                onChange={onChange}
               />
             </div>
 
@@ -128,8 +94,8 @@ class UpdateBookInfo extends Component {
                 placeholder='Describe this book'
                 name='description'
                 className='form-control'
-                value={this.state.description}
-                onChange={this.onChange}
+                value={book.description}
+                onChange={onChange}
               />
             </div>
 
@@ -140,8 +106,8 @@ class UpdateBookInfo extends Component {
                 placeholder='published_date'
                 name='published_date'
                 className='form-control'
-                value={this.state.published_date}
-                onChange={this.onChange}
+                value={ book.published_date? book.published_date.substring(0,10) : null }
+                onChange={onChange}
               />
             </div>
             <div className='form-group'>
@@ -151,8 +117,8 @@ class UpdateBookInfo extends Component {
                 placeholder='Publisher of this Book'
                 name='publisher'
                 className='form-control'
-                value={this.state.publisher}
-                onChange={this.onChange}
+                value={book.publisher}
+                onChange={onChange}
               />
             </div>
 
@@ -164,6 +130,5 @@ class UpdateBookInfo extends Component {
       </div>
     );
   }
-}
 
-export default UpdateBookInfo;
+
