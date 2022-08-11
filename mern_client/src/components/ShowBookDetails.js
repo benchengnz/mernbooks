@@ -11,7 +11,7 @@ export default function ShowBookDetails() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios('http://localhost:8082/api/books/'+ params.id);
+        const response = await axios('/api/books/'+ params.id);
         setData(response.data);
       } catch (error) {
         console.error(error.message);

@@ -1,12 +1,11 @@
 
 const mongoose = require('mongoose');
-const config = require('config');
-const db = config.get('mongoURI');
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mern_client";
 
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      db,
+      MONGODB_URI,
       {
         useNewUrlParser: true
       }
